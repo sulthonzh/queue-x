@@ -125,7 +125,12 @@ class PriorityQueue {
     if (this.isEmpty) return undefined;
     // For max priority, we need to find the actual highest priority item
     return this.#items.reduce((max, item) => {
-      return this.#comparator(item, max) ? item : max;
+      const result = this.#comparator(item, max);
+      // Handle both boolean and numeric comparators
+      // Boolean: true means item has higher priority
+      // Numeric: negative means item has higher priority (like Array.sort)
+      const hasHigherPriority = typeof result === 'number' ? result < 0 : result;
+      return hasHigherPriority ? item : max;
     }, this.#items[0]);
   }
 
@@ -141,7 +146,16 @@ class PriorityQueue {
     }
     this.#comparator = fn;
     // Re-sort items when comparator changes
-    this.#items.sort(this.#comparator);
+    // Convert comparator to numeric format for Array.sort
+    this.#items.sort((a, b) => {
+      const result = this.#comparator(a, b);
+      // If comparator returns boolean, convert to -1/0/1
+      if (typeof result === 'boolean') {
+        return result ? -1 : 1;
+      }
+      // If comparator returns number, use as-is
+      return result;
+    });
   }
 
   /** Add item with priority */
@@ -152,7 +166,10 @@ class PriorityQueue {
     // Binary search for insertion position (using comparator for priority)
     while (left < right) {
       const mid = (left + right) >> 1;
-      if (this.#comparator(item, this.#items[mid])) {
+      const result = this.#comparator(item, this.#items[mid]);
+      // Handle both boolean and numeric comparators
+      const hasHigherPriority = typeof result === 'number' ? result < 0 : result;
+      if (hasHigherPriority) {
         // Item has higher priority than mid, belongs before it
         right = mid;
       } else {
@@ -171,7 +188,10 @@ class PriorityQueue {
     // Find the highest priority item (which may not be at index 0)
     let maxIndex = 0;
     for (let i = 1; i < this.#items.length; i++) {
-      if (this.#comparator(this.#items[i], this.#items[maxIndex])) {
+      const result = this.#comparator(this.#items[i], this.#items[maxIndex]);
+      // Handle both boolean and numeric comparators
+      const hasHigherPriority = typeof result === 'number' ? result < 0 : result;
+      if (hasHigherPriority) {
         maxIndex = i;
       }
     }
@@ -364,7 +384,7 @@ class Deque {
   constructor(iterable = []) {
     if (iterable) {
       for (const item of iterable) {
-        this.push(item);
+        this.append(item);
       }
     }
   }
