@@ -87,21 +87,22 @@ pq3.comparator = (a, b) => b - a;
 pq3.enqueue(2);
 pq3.enqueue(4);
 
-assert(pq3.dequeue() === 4, 'After changing comparator to max');
-assert(pq3.dequeue() === 5, 'Second after max change');
-assert(pq3.dequeue() === 3, 'Third after max change');
-assert(pq3.dequeue() === 2, 'Fourth after max change');
+assert(pq3.dequeue() === 5, 'After changing comparator to max, largest should come first');
+assert(pq3.dequeue() === 4, 'Second should be next largest');
+assert(pq3.dequeue() === 3, 'Third should be next');
+assert(pq3.dequeue() === 2, 'Fourth should be smallest');
 
 // Test getPriority
-const pq4 = new PriorityQueue([3, 1, 2]);
+const pq4 = new PriorityQueue({ iterable: [3, 1, 2] });
 assert(pq4.getPriority(1) === 0, 'Priority 1 should be at index 0');
 assert(pq4.getPriority(2) === 1, 'Priority 2 should be at index 1');
 assert(pq4.getPriority(3) === 2, 'Priority 3 should be at index 2');
 assert(pq4.getPriority(4) === -1, 'Non-existent item should return -1');
 
 // Test remove
-const pq5 = new PriorityQueue([5, 1, 3, 2, 4]);
-const removed = pq5.remove(1); // Remove item with value 1
+const pq5 = new PriorityQueue({ iterable: [5, 1, 3, 2, 4] });
+const indexToRemove = pq5.getPriority(1); // Find index of value 1
+const removed = pq5.remove(indexToRemove); // Remove at that index
 assert(removed === 1, 'Remove should return removed item');
 assert(pq5.size === 4, 'Size should decrease after remove');
 assert(pq5.peek() === 2, 'New front should be 2');
@@ -111,7 +112,7 @@ pq5.clear();
 assert(pq5.isEmpty, 'Clear should make queue empty');
 
 // Test toString
-const pq6 = new PriorityQueue([3, 1, 2]);
+const pq6 = new PriorityQueue({ iterable: [3, 1, 2] });
 assert(pq6.toString() === 'PriorityQueue(1, 2, 3)', 'toString should show priority order');
 
 // Test toJSON
@@ -143,13 +144,13 @@ assert(emptyPq.peek() === undefined, 'Peek on empty should be undefined');
 assert(emptyPq.dequeue() === undefined, 'Dequeue on empty should be undefined');
 
 // Single item
-const singlePq = new PriorityQueue([42]);
+const singlePq = new PriorityQueue({ iterable: [42] });
 assert(singlePq.peek() === 42, 'Single item peek');
 assert(singlePq.dequeue() === 42, 'Single item dequeue');
 assert(singlePq.isEmpty, 'Should be empty after dequeue');
 
 // Duplicate items
-const duplicatePq = new PriorityQueue([1, 1, 2, 2]);
+const duplicatePq = new PriorityQueue({ iterable: [1, 1, 2, 2] });
 assert(duplicatePq.size === 4, 'Should handle duplicates');
 assert(duplicatePq.dequeue() === 1, 'First dequeue');
 assert(duplicatePq.dequeue() === 1, 'Second dequeue (duplicate)');

@@ -49,7 +49,7 @@ assert(maxPq.dequeue() === 1, 'Fifth max dequeue');
 
 // Test string comparison
 const stringPq = new PriorityQueue({
-  comparator: (a, b) => a.localeCompare(b) > 0  // Changed to return boolean
+  comparator: (a, b) => a.localeCompare(b)  // Return number like standard localeCompare
 });
 
 stringPq.enqueue('banana');
@@ -62,7 +62,7 @@ assert(stringPq.dequeue() === 'cherry', 'Third string');
 
 // Test reverse comparator
 const reversePq = new PriorityQueue({
-  comparator: (a, b) => b.localeCompare(a) > 0  // Changed to return boolean
+  comparator: (a, b) => b.localeCompare(a)  // Return number like standard localeCompare
 });
 
 reversePq.enqueue('banana');
